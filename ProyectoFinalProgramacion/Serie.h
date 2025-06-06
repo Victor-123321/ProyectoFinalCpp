@@ -28,5 +28,9 @@ public:
         return info;
     }
 
+    std::string getName() {
+        return name;
+    }
+
 };
 

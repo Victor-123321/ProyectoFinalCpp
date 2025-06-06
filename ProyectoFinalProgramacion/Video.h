@@ -15,5 +15,13 @@ public:
 
     virtual const std::string mostrar() const = 0;
 
+    float getGrade() {
+        return grade;
+    }
+
+    std::string getName() {
+        return name;
+    }
+
 };
 
