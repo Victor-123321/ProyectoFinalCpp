@@ -15,8 +15,8 @@ public:
     Video(std::string id, std::string name, float time, std::string genero, float grade, std::string URL)
         : id(id), name(name), time(time), genero(genero), grade(grade), URL(URL) {}
 
-    virtual const std::string mostrar() const = 0; // Método virtual puro para polimorfismo
-    virtual void reproducir() = 0; // Método virtual puro para reproducción
+    virtual const std::string mostrar() const = 0; // Metodo virtual puro para polimorfismo
+    virtual void reproducir() = 0; // Metodo virtual puro para reproduccion
 
     float getGrade() const { return grade; }
     std::string getName() const { return name; }

@@ -14,7 +14,7 @@ public:
     }
 
     const std::string mostrar() const override {
-        return "Pelicula: " + name + " (" + genero + "), Duraci�n: " + std::to_string(time) + " mins, Calificaci�n: " + std::to_string(grade);
+        return "Pelicula: " + name + " (" + genero + "), Duracion: " + std::to_string(time) + " mins, Calificacion: " + std::to_string(grade);
     }
 
     void reproducir() {

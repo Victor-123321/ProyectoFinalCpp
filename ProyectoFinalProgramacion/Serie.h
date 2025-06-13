@@ -3,7 +3,6 @@
 #include "Temporada.h"
 #include <vector>
 #include <iostream>
-
 class Serie : public Video {
 private:
     std::vector<Temporada> temporadas;
@@ -34,9 +33,11 @@ public:
         return name;
     }
 
-    void reproducir() override{
-        std::cout << "jalo nigga";
+    const std::vector<Temporada>& getTemporadas() const {
+        return temporadas;
     }
 
+    void reproducir() override {
+        std::cout << "jalo nigga";
+    }
 };
-

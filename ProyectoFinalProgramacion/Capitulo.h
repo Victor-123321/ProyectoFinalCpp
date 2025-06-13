@@ -13,7 +13,7 @@ public:
     }
 
     const std::string mostrar() const override {
-        return "Capitulo: " + name + ", Duración: " + std::to_string(time) + " mins";
+        return "Capitulo: " + name + ", Duracion: " + std::to_string(time) + " mins";
     }
 
     void reproducir() {
