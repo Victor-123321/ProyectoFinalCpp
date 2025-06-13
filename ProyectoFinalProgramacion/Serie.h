@@ -1,43 +1,31 @@
 #pragma once
 #include "Video.h"
-#include "Temporada.h"
 #include <vector>
-#include <iostream>
+#include "Temporada.h"
+
 class Serie : public Video {
 private:
     std::vector<Temporada> temporadas;
 
 public:
     Serie() : Video() {}
-
-    Serie(std::string id, std::string name, float time, std::string genero, float grade, std::string URL)
-        : Video(id, name, time, genero, grade, URL) {
-    }
-
-    void agregarTemporada(const Temporada& temporada) {
-        temporadas.push_back(temporada);
+    Serie(std::string id, std::string name, float time, std::string genero, const std::vector<float>& calificaciones, std::string URL)
+        : Video(id, name, time, genero, calificaciones, URL) {
     }
 
     const std::string mostrar() const override {
-        std::string info = "Serie: " + name + "\n";
-        for (const auto& temporada : temporadas) {
-            info += "  Temporada " + std::to_string(temporada.getNumeroTemporada()) + ":\n";
-            for (const auto& capitulo : temporada.getCapitulos()) {
-                info += "    - " + capitulo.mostrar() + "\n";
-            }
-        }
-        return info;
+        return "Serie: " + name + " (" + genero + "), Duracion promedio: " + std::to_string(time) + " mins, Calificacion: " + std::to_string(SacarPromedio());
     }
 
-    std::string getName() {
-        return name;
+    void reproducir() const override {
+        std::cout << "Reproduciendo serie: " << name << std::endl;
+    }
+
+    void agregarTemporada(const Temporada& temp) {
+        temporadas.push_back(temp);
     }
 
     const std::vector<Temporada>& getTemporadas() const {
         return temporadas;
-    }
-
-    void reproducir() override {
-        std::cout << "jalo nigga";
     }
 };

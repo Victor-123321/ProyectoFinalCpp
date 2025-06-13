@@ -57,6 +57,7 @@ void mostrarMenu() {
     cout << "3. Mostrar episodios de una serie con cierta calificacion\n";
     cout << "4. Mostrar peliculas con cierta calificacion\n";
     cout << "5. Calificar un video\n";
+    cout << "6. Wachar un video\n";
     cout << "0. Ya me voy senores, se acabo este baile\n";
     cout << "Seleccione una opcion: ";
 }
@@ -74,8 +75,8 @@ void cargarArchivo(vector<Video*>& catalogo, const string& nombreArchivo) {
     catalogo.clear();
 
     string linea;
-    string tipo, id, nombre, genero, url, temp, serie, temporada;
-    float duracion, calificacion;
+    string tipo, id, nombre, genero, url, temp, serie, temporada, calificacionesStr;
+    float duracion;
     int numTemporada;
     Serie* serieActual = nullptr;
 
@@ -89,10 +90,25 @@ void cargarArchivo(vector<Video*>& catalogo, const string& nombreArchivo) {
             getline(ss, temp, ',');
             duracion = temp.empty() ? 0.0f : stof(temp);
             getline(ss, genero, ',');
-            getline(ss, temp, ',');
-            calificacion = temp.empty() ? 0.0f : stof(temp);
+            getline(ss, calificacionesStr, ',');
+            vector<float> calificaciones;
+            if (!calificacionesStr.empty()) {
+                stringstream califStream(calificacionesStr);
+                string calif;
+                while (getline(califStream, calif, ';')) { // Use semicolon to separate ratings
+                    try {
+                        float rating = stof(calif);
+                        if (rating >= 0.0 && rating <= 5.0) {
+                            calificaciones.push_back(rating);
+                        }
+                    }
+                    catch (const std::exception& e) {
+                        cout << "Error al convertir calificacion: " << calif << endl;
+                    }
+                }
+            }
             getline(ss, url, ',');
-            catalogo.push_back(new Pelicula(id, nombre, duracion, genero, calificacion, url));
+            catalogo.push_back(new Pelicula(id, nombre, duracion, genero, calificaciones, url));
             cout << "Cargada Pelicula: " << nombre << endl;
         }
         else if (tipo == "Serie") {
@@ -101,10 +117,25 @@ void cargarArchivo(vector<Video*>& catalogo, const string& nombreArchivo) {
             getline(ss, temp, ',');
             duracion = temp.empty() ? 0.0f : stof(temp);
             getline(ss, genero, ',');
-            getline(ss, temp, ',');
-            calificacion = temp.empty() ? 0.0f : stof(temp);
+            getline(ss, calificacionesStr, ',');
+            vector<float> calificaciones;
+            if (!calificacionesStr.empty()) {
+                stringstream califStream(calificacionesStr);
+                string calif;
+                while (getline(califStream, calif, ';')) {
+                    try {
+                        float rating = stof(calif);
+                        if (rating >= 0.0 && rating <= 5.0) {
+                            calificaciones.push_back(rating);
+                        }
+                    }
+                    catch (const std::exception& e) {
+                        cout << "Error al convertir calificacion: " << calif << endl;
+                    }
+                }
+            }
             getline(ss, url, ',');
-                serieActual = new Serie(id, nombre, duracion, genero, calificacion, url);
+            serieActual = new Serie(id, nombre, duracion, genero, calificaciones, url);
             catalogo.push_back(serieActual);
             cout << "Cargada Serie: " << nombre << endl;
         }
@@ -133,14 +164,29 @@ void cargarArchivo(vector<Video*>& catalogo, const string& nombreArchivo) {
             getline(ss, temp, ',');
             duracion = temp.empty() ? 0.0f : stof(temp);
             getline(ss, genero, ',');
-            getline(ss, temp, ',');
-            calificacion = temp.empty() ? 0.0f : stof(temp);
+            getline(ss, calificacionesStr, ',');
+            vector<float> calificaciones;
+            if (!calificacionesStr.empty()) {
+                stringstream califStream(calificacionesStr);
+                string calif;
+                while (getline(califStream, calif, ';')) {
+                    try {
+                        float rating = stof(calif);
+                        if (rating >= 0.0 && rating <= 5.0) {
+                            calificaciones.push_back(rating);
+                        }
+                    }
+                    catch (const std::exception& e) {
+                        cout << "Error al convertir calificacion: " << calif << endl;
+                    }
+                }
+            }
             getline(ss, url, ',');
             // Obtener la ultima temporada de la serie actual
             const vector<Temporada>& temporadas = serieActual->getTemporadas();
             if (!temporadas.empty()) {
                 Temporada& ultimaTemporada = const_cast<Temporada&>(temporadas.back());
-                ultimaTemporada.agregarCapitulo(Capitulo(id, nombre, duracion, genero, calificacion, url));
+                ultimaTemporada.agregarCapitulo(Capitulo(id, nombre, duracion, genero, calificaciones, url));
                 cout << "Cargado Capitulo: " << nombre << " (Temporada " << ultimaTemporada.getNumeroTemporada() << ")" << endl;
             }
             else {
@@ -167,19 +213,19 @@ void mostrarVideosPorCriterio(const vector<Video*>& catalogo) {
         if (!validarCalificacion(calificacion)) return;
         for (Video* v : catalogo) {
             if (Pelicula* p = dynamic_cast<Pelicula*>(v)) {
-                if (p->getGrade() >= calificacion) {
-                    cout << p->mostrar() << endl;
+                if (p->SacarPromedio() >= calificacion) {
+                    cout << *p << endl; // Usar << en lugar de mostrar()
                 }
             }
             else if (Serie* s = dynamic_cast<Serie*>(v)) {
                 bool mostrarSerie = false;
                 // Verificar si la serie o algun capitulo cumple con la calificacion
-                if (s->getGrade() >= calificacion) {
+                if (s->SacarPromedio() >= calificacion) {
                     mostrarSerie = true;
                 }
                 for (const Temporada& t : s->getTemporadas()) {
                     for (const Capitulo& c : t.getCapitulos()) {
-                        if (c.getGrade() >= calificacion) {
+                        if (c.SacarPromedio() >= calificacion) {
                             mostrarSerie = true;
                             break;
                         }
@@ -190,8 +236,8 @@ void mostrarVideosPorCriterio(const vector<Video*>& catalogo) {
                     for (const Temporada& t : s->getTemporadas()) {
                         cout << "  Temporada " << t.getNumeroTemporada() << ":\n";
                         for (const Capitulo& c : t.getCapitulos()) {
-                            if (c.getGrade() >= calificacion) {
-                                cout << "    - " << c.mostrar() << ", Calificacion: " << c.getGrade() << endl;
+                            if (c.SacarPromedio() >= calificacion) {
+                                cout << "    - " << c << ", Calificacion: " << c.SacarPromedio() << endl; // Usar << para Capitulo
                             }
                         }
                     }
@@ -206,12 +252,11 @@ void mostrarVideosPorCriterio(const vector<Video*>& catalogo) {
         for (Video* v : catalogo) {
             if (Pelicula* p = dynamic_cast<Pelicula*>(v)) {
                 if (p->getGenero() == genero) {
-                    cout << p->mostrar() << endl;
+                    cout << *p << endl; // AQUI ESTA LA SOBRECARGA
                 }
             }
             else if (Serie* s = dynamic_cast<Serie*>(v)) {
                 bool mostrarSerie = false;
-                // Verificar si la serie o algun capitulo cumple con el genero
                 if (s->getGenero() == genero) {
                     mostrarSerie = true;
                 }
@@ -229,7 +274,7 @@ void mostrarVideosPorCriterio(const vector<Video*>& catalogo) {
                         cout << "  Temporada " << t.getNumeroTemporada() << ":\n";
                         for (const Capitulo& c : t.getCapitulos()) {
                             if (c.getGenero() == genero) {
-                                cout << "    - " << c.mostrar() << ", Calificacion: " << c.getGrade() << endl;
+                                cout << "    - " << c << ", Calificacion: " << c.SacarPromedio() << endl; // Usar << para Capitulo
                             }
                         }
                     }
@@ -260,10 +305,17 @@ void mostrarEpisodiosSerie(const vector<Video*>& catalogo) {
     cout << "Ingrese la calificacion minima (0.0 a 5.0): ";
     if (!validarCalificacion(calificacion)) return;
 
-    cout << serie->mostrar();
+    cout << "Serie: " << serie->getName() << endl; // Mostrar nombre de la serie
+    for (const Temporada& t : serie->getTemporadas()) {
+        cout << "  Temporada " << t.getNumeroTemporada() << ":\n";
+        for (const Capitulo& c : t.getCapitulos()) {
+            if (c.SacarPromedio() >= calificacion) {
+                cout << "    - " << c << ", Calificacion: " << c.SacarPromedio() << endl; // Usar << para Capitulo
+            }
+        }
+    }
 }
 
-// Funcion para mostrar peliculas con cierta calificacion
 void mostrarPeliculasCalificacion(const vector<Video*>& catalogo) {
     float calificacion;
     cout << "Ingrese la calificacion minima (0.0 a 5.0): ";
@@ -271,14 +323,14 @@ void mostrarPeliculasCalificacion(const vector<Video*>& catalogo) {
 
     for (Video* v : catalogo) {
         if (Pelicula* p = dynamic_cast<Pelicula*>(v)) {
-            if (p->getGrade() >= calificacion) {
-                cout << p->mostrar() << endl;
+            if (p->SacarPromedio() >= calificacion) {
+                cout << *p << endl; // wuuu sobrecarga 
             }
         }
     }
 }
 
-// Funcion para calificar un video
+// Calificar video
 void calificarVideo(vector<Video*>& catalogo) {
     cout << "Videos disponibles:\n";
     for (size_t i = 0; i < catalogo.size(); ++i) {
@@ -302,7 +354,7 @@ int main() {
 
     while (opcion != 0) {
         mostrarMenu();
-        if (!validarEntradaNumerica(opcion, 0, 5)) continue;
+        if (!validarEntradaNumerica(opcion, 0, 6)) continue;
 
         limpiarPantalla();
 
@@ -331,6 +383,49 @@ int main() {
         case 5:
             calificarVideo(catalogo);
             break;
+
+        case 6:
+        {
+            cout << "Videos disponibles:\n";
+            for (size_t i = 0; i < catalogo.size(); ++i) {
+                cout << i << ") " << catalogo[i]->getName() << endl;
+            }
+            cout << "Seleccione el indice del video a reproducir: ";
+            int indice;
+            if (!validarEntradaNumerica(indice, 0, catalogo.size() - 1)) break;
+
+            Pelicula* pelicula = dynamic_cast<Pelicula*>(catalogo[indice]);
+            if (pelicula) {
+                pelicula->reproducir();
+                break;
+            }
+
+            Serie* serie = dynamic_cast<Serie*>(catalogo[indice]);
+            if (serie) {
+                cout << "Es una serie. Seleccione temporada y capitulo:\n";
+                auto& temporadas = serie->getTemporadas();
+                for (size_t i = 0; i < temporadas.size(); ++i) {
+                    cout << "  Temporada " << temporadas[i].getNumeroTemporada() << " (" << i << ")\n";
+                }
+                cout << "Temporada: ";
+                int tIndex;
+                if (!validarEntradaNumerica(tIndex, 0, temporadas.size() - 1)) break;
+
+                const auto& capitulos = temporadas[tIndex].getCapitulos();
+                for (size_t j = 0; j < capitulos.size(); ++j) {
+                    cout << "    Capitulo " << j << ": " << capitulos[j].getName() << endl;
+                }
+                cout << "Capitulo: ";
+                int cIndex;
+                if (!validarEntradaNumerica(cIndex, 0, capitulos.size() - 1)) break;
+
+                capitulos[cIndex].reproducir();
+                break;
+            }
+
+            cout << "Tipo de video no reconocido.\n";
+            break;
+        }
 
         case 0:
             cout << "Saliendo del sistema...\n";

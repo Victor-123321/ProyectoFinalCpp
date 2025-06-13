@@ -127,12 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Capitulo.cpp" />
-    <ClCompile Include="Pelicula.cpp" />
     <ClCompile Include="ProyectoFinalProgramacion.cpp" />
-    <ClCompile Include="Serie.cpp" />
-    <ClCompile Include="Temporada.cpp" />
-    <ClCompile Include="Video.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Capitulo.h" />
