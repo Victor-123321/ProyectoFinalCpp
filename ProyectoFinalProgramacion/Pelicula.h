@@ -1,5 +1,6 @@
 #pragma once
 #include "Video.h"
+#include <tchar.h>
 #include <windows.h>
 #include <shellapi.h>
 
@@ -18,7 +19,7 @@ public:
 
     void reproducir() {
         // Reemplazar por la url de la pelicula en netflix
-        ShellExecute(0, 0, L"http://www.google.com", 0, 0, SW_SHOW);
+        ShellExecute(0, 0, _T("http://www.google.com"), 0, 0, SW_SHOW);
     }
 
 };

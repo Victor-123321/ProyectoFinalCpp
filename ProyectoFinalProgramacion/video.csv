@@ -1,9 +1,8 @@
-tipo,id,nombre,duracion,genero,calificacion,url
 Pelicula,P001,Matrix,120.0,Accion,4.8,C:\Videos\matrix.mp4
 Pelicula,P002,Soul,95.0,Drama,4.1,C:\Videos\soul.mp4
 Pelicula,P003,Morbius,105.0,Accion,2.3,C:\Videos\morbius.mp4
 Serie,S001,Breaking Bad,0.0,Drama,4.9,C:\Videos\breakingbad_trailer.mp4
-Temporada,T1,1,0,Drama,0,none
+Temporada,T1,1,0.0,Drama,0,none
 Capitulo,C001,Piloto,58.0,Drama,4.7,C:\Videos\breakingbad_s1e1.mp4
 Capitulo,C002,Cats in the Bag...,48.0,Drama,4.5,C:\Videos\breakingbad_s1e2.mp4
 Temporada,T2,2,0,Drama,0,none

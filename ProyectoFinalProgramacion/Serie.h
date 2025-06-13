@@ -2,6 +2,8 @@
 #include "Video.h"
 #include "Temporada.h"
 #include <vector>
+#include <iostream>
+
 class Serie : public Video {
 private:
     std::vector<Temporada> temporadas;
@@ -30,6 +32,10 @@ public:
 
     std::string getName() {
         return name;
+    }
+
+    void reproducir() override{
+        std::cout << "jalo nigga";
     }
 
 };

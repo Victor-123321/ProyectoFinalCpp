@@ -21,7 +21,7 @@ bool validarEntradaNumerica(int& opcion, int min, int max) {
     if (cin.fail() || opcion < min || opcion > max) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Entrada inválida. Por favor, ingrese un número entre " << min << " y " << max << ".\n";
+        cout << "Entrada invalida. Por favor, ingrese un numero entre " << min << " y " << max << ".\n";
         return false;
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -34,7 +34,7 @@ bool validarCalificacion(float& calificacion) {
     if (cin.fail() || calificacion < 0.0 || calificacion > 5.0) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "Calificación inválida. Debe estar entre 0.0 y 5.0.\n";
+        cout << "Calificación invalida. Debe estar entre 0.0 y 5.0.\n";
         return false;
     }
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -45,12 +45,12 @@ bool validarCalificacion(float& calificacion) {
 void mostrarMenu() {
     cout << "===== SERVICIO DE STREAMING =====\n";
     cout << "1. Cargar archivo de datos\n";
-    cout << "2. Mostrar videos por calificación o género\n";
-    cout << "3. Mostrar episodios de una serie con cierta calificación\n";
-    cout << "4. Mostrar películas con cierta calificación\n";
+    cout << "2. Mostrar videos por calificacion o genero\n";
+    cout << "3. Mostrar episodios de una serie con cierta calificacion\n";
+    cout << "4. Mostrar peliculas con cierta calificacion\n";
     cout << "5. Calificar un video\n";
     cout << "0. Salir\n";
-    cout << "Seleccione una opción: ";
+    cout << "Seleccione una opcion: ";
 }
 
 // Función para cargar datos desde un archivo CSV
@@ -82,6 +82,8 @@ void cargarArchivo(vector<Video*>& catalogo, const string& nombreArchivo) {
         getline(ss, nombre, ',');
         getline(ss, temp, ',');
         duracion = stof(temp);
+        
+
         getline(ss, genero, ',');
         getline(ss, temp, ',');
         calificacion = stof(temp);
@@ -110,12 +112,12 @@ void cargarArchivo(vector<Video*>& catalogo, const string& nombreArchivo) {
 // Función para mostrar videos por calificación o género
 void mostrarVideosPorCriterio(const vector<Video*>& catalogo) {
     int opcion;
-    cout << "1. Filtrar por calificación\n2. Filtrar por género\nSeleccione una opción: ";
+    cout << "1. Filtrar por calificacion\n2. Filtrar por genero\nSeleccione una opcion: ";
     if (!validarEntradaNumerica(opcion, 1, 2)) return;
 
     if (opcion == 1) {
         float calificacion;
-        cout << "Ingrese la calificación mínima (0.0 a 5.0): ";
+        cout << "Ingrese la calificacion minima (0.0 a 5.0): ";
         if (!validarCalificacion(calificacion)) return;
         for (Video* v : catalogo) {
             if (v->getGrade() >= calificacion) {
@@ -125,7 +127,7 @@ void mostrarVideosPorCriterio(const vector<Video*>& catalogo) {
     }
     else {
         string genero;
-        cout << "Ingrese el género: ";
+        cout << "Ingrese el genero: ";
         getline(cin, genero);
         for (Video* v : catalogo) {
             if (v->getGenero() == genero) {
@@ -143,13 +145,13 @@ void mostrarEpisodiosSerie(const vector<Video*>& catalogo) {
             cout << i << ") " << catalogo[i]->getName() << endl;
         }
     }
-    cout << "Seleccione el índice de la serie: ";
+    cout << "Seleccione el indice de la serie: ";
     int indice;
     if (!validarEntradaNumerica(indice, 0, catalogo.size() - 1)) return;
 
     Serie* serie = dynamic_cast<Serie*>(catalogo[indice]);
     if (!serie) {
-        cout << "Índice no corresponde a una serie.\n";
+        cout << "Indice no corresponde a una serie.\n";
         return;
     }
 
@@ -165,7 +167,7 @@ void mostrarEpisodiosSerie(const vector<Video*>& catalogo) {
 // Función para mostrar películas con cierta calificación
 void mostrarPeliculasCalificacion(const vector<Video*>& catalogo) {
     float calificacion;
-    cout << "Ingrese la calificación mínima (0.0 a 5.0): ";
+    cout << "Ingrese la calificacion minima (0.0 a 5.0): ";
     if (!validarCalificacion(calificacion)) return;
 
     for (Video* v : catalogo) {
@@ -183,7 +185,7 @@ void calificarVideo(vector<Video*>& catalogo) {
     for (size_t i = 0; i < catalogo.size(); ++i) {
         cout << i << ") " << catalogo[i]->getName() << endl;
     }
-    cout << "Seleccione el índice del video a calificar: ";
+    cout << "Seleccione el indice del video a calificar: ";
     int indice;
     if (!validarEntradaNumerica(indice, 0, catalogo.size() - 1)) return;
 
@@ -197,7 +199,7 @@ void calificarVideo(vector<Video*>& catalogo) {
 
 int main() {
     vector<Video*> catalogo;
-    int opcion = 0;
+    int opcion = 1;
 
     while (opcion != 0) {
         mostrarMenu();
@@ -207,11 +209,13 @@ int main() {
 
         switch (opcion) {
         case 1:
+        {
             cout << "Ingrese el nombre del archivo (ej. videos.csv): ";
             string nombreArchivo;
             getline(cin, nombreArchivo);
             cargarArchivo(catalogo, nombreArchivo);
             break;
+        }
 
         case 2:
             mostrarVideosPorCriterio(catalogo);
@@ -234,7 +238,7 @@ int main() {
             break;
 
         default:
-            cout << "Opción no válida.\n";
+            cout << "Opcion no valida.\n";
             break;
         }
         cout << "\nPresione ENTER para continuar...";
